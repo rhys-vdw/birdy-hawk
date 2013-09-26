@@ -68,11 +68,11 @@ public class BirdMovement : Behavior
             // If we've moving fast enough, we can control our flight.
             if( forwardVelocity.magnitude > SteerSpeed )
             {
-                foreach( var r in _renderers ) r.material.color = Color.red;
+                //foreach( var r in _renderers ) r.material.color = Color.red;
                 _velocity -= forwardVelocity;
                 _velocity += transform.forward * forwardVelocity.magnitude;
             }
-            else foreach( var r in _renderers ) r.material.color = Color.white;
+            //else foreach( var r in _renderers ) r.material.color = Color.white;
         }
 
         // Apply drag.
