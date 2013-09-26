@@ -485,7 +485,7 @@ MonoBehaviour:
   RotateSpeed: 180
   FlapKey: 273
   FlapAcceleration: 10
-  SteerSpeed: 10
+  SteerSpeed: 40
   Decelleration: 30
   DecellerationScale: .99000001
   Gravity: 10
@@ -526,11 +526,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 37e83bba655d2154a915dea92d8502d8, type: 2}
       propertyPath: SteerSpeed
-      value: 10
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 37e83bba655d2154a915dea92d8502d8, type: 2}
-      propertyPath: RotateSpeed
-      value: 180
+      propertyPath: DecellerationScale
+      value: .99000001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37e83bba655d2154a915dea92d8502d8, type: 2}

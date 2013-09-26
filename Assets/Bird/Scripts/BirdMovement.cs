@@ -56,8 +56,6 @@ public class BirdMovement : Behavior
             forwardVelocity = Vector3.zero;
         }
 
-        Debug.DrawRay( transform.position, forwardVelocity, Color.red );
-
         // Check if we've rotated.
         var rotateDirection = Input.GetAxis( RotateAxis );
 
@@ -68,17 +66,16 @@ public class BirdMovement : Behavior
             // If we've moving fast enough, we can control our flight.
             if( forwardVelocity.magnitude > SteerSpeed )
             {
-                //foreach( var r in _renderers ) r.material.color = Color.red;
                 _velocity -= forwardVelocity;
                 _velocity += transform.forward * forwardVelocity.magnitude;
             }
-            //else foreach( var r in _renderers ) r.material.color = Color.white;
         }
 
         // Apply drag.
         var oldY = _velocity.y;
-        //_velocity = Vector3.MoveTowards( _velocity, Vector3.zero, Decelleration * Time.fixedDeltaTime );
         _velocity = _velocity.normalized * _velocity.magnitude * DecellerationScale;
+
+        // Don't drag when falling.
         if( oldY < 0 ) {
             _velocity.y = oldY;
         }
