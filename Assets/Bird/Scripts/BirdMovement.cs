@@ -5,12 +5,17 @@ using IEnumerator = System.Collections.IEnumerator;
 public class BirdMovement : MonoBehaviour
 {
     public KeyCode FlapKey = KeyCode.UpArrow;
-    public KeyCode SteerClockwise = KeyCode.LeftArrow;
-    public KeyCode SteerAnticlockwise = KeyCode.RightArrow;
-    public float FlapUpForceMagnitude = 100f;
-    public float FlapForceMagnitude = 100f;
+    public string RotateAxis = "Horizontal";
+
+    public float FlapAcceleration = 20f;
+    public float MinSpeed = 5f;
+    public float MaxSpeed = 50f;
+    public float RotateSpeed = 20f;
+
     public float FlapDelay = 0.2f;
-    public float RotateSpeed = 10f;
+
+    public float Drag = 0.5f;
+    public float Gravity = 10f;
 
     public Vector3 MaxMoveSpeed = new Vector3( 10f, 10f, 10f );
     public float MaxSpinSpeed = 10f;
@@ -18,32 +23,38 @@ public class BirdMovement : MonoBehaviour
     float _lastFlapTime = 0;
     float _steerDirection = 0;
 
+    float _forwardSpeed = 0;
+    float _fallSpeed = 0;
+
+    Vector3 _velocity = Vector3.zero;
+
     void Update()
     {
-        _steerDirection = 0;
-        if( Input.GetKey( SteerClockwise ) )     _steerDirection++;
-        if( Input.GetKey( SteerAnticlockwise ) ) _steerDirection--;
-
         if( Time.time > _lastFlapTime + FlapDelay )
         {
             if( Input.GetKeyDown( FlapKey ) )
             {
-                rigidbody.AddForce(
-                    FlapForceMagnitude * transform.forward +
-                    FlapUpForceMagnitude * Vector3.up
-                );
+                _velocity = FlapAcceleration * transform.forward;
+                //_forwardSpeed += _forwardSpeed + FlapAcceleration;
+                _lastFlapTime = Time.time;
+                _fallSpeed = 0;
             }
         }
-
-        ClampVelocity();
     }
 
     void LateUpdate()
     {
-        if( _steerDirection != 0 )
-        {
-            transform.Rotate( _steerDirection * RotateSpeed * Vector3.forward, Space.World );
-        }
+        _forwardSpeed -= Drag * Time.fixedDeltaTime;
+        _forwardSpeed = Mathf.Clamp( _forwardSpeed, MinSpeed, MaxSpeed );
+
+        _fallSpeed += Physics.gravity.y * Time.fixedDeltaTime;
+
+        transform.Rotate( Input.GetAxis( RotateAxis ) * RotateSpeed * -Vector3.forward, Space.World );
+        transform.Translate( Time.fixedDeltaTime * (
+                    _forwardSpeed * transform.forward +
+                    _fallSpeed * Vector3.up ),
+                Space.World
+        );
     }
 
     void ClampVelocity()
