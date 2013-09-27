@@ -24,11 +24,31 @@ public class Player : Behavior
         }
     }
 
+    Collider _collider;
+
+    void Awake()
+    {
+        _collider = Descendants().Component<Collider>();
+    }
+
     void Start()
     {
         foreach( var go in Descendants().Select( t => t.gameObject ) )
         {
             go.layer = BirdLayer;
+        }
+
+        if( Descendants().Components<Collider>().Count() > 1 )
+        {
+            Debug.LogError( "bird has too many colliders!", this );
+        }
+    }
+
+    public Collider Collider
+    {
+        get
+        {
+            return _collider;
         }
     }
 }

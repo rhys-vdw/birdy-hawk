@@ -8,15 +8,20 @@ public class TrailDetector : Behavior
     public TrailDetector Next = null;
     public int MinimumLoopCount = 10;
 
-    public void StartTimeout( float duration )
+    Player _owner;
+
+    public void Initialize( Player owner, float duration )
     {
-        Invoke( "EnableCollider", 0.5f );
+        _owner = owner;
+        Physics.IgnoreCollision( collider, owner.Collider, true );
+        Invoke( "RestoreCollision", 0.5f );
         Invoke( "Repool", duration );
     }
 
-    void EnableCollider()
+    void RestoreCollision()
     {
-        collider.enabled = true;
+        Physics.IgnoreCollision( collider, _owner.Collider, false );
+        Children().Component<Renderer>().material.color = Color.yellow;
     }
 
     void Repool()
@@ -27,7 +32,7 @@ public class TrailDetector : Behavior
     void OnDisable()
     {
         Next = null;
-        collider.enabled = false;
+        Children().Component<Renderer>().material.color = Color.white;
     }
 
     void OnTriggerEnter( Collider c )
@@ -38,33 +43,66 @@ public class TrailDetector : Behavior
             return;
         }
 
-        foreach( var detector in descendants )
-        {
-            var sphere = GameObject.CreatePrimitive( PrimitiveType.Sphere );
-            sphere.transform.position = detector.transform.position;
-        }
+        var flowersInLoop = Scene.Object<FlowerManager>().Flowers
+            .Where( f => PointInLoop( f.transform.position, descendants ) );
 
+        foreach( var flower in flowersInLoop )
+        {
+            flower.SetOwner( 0 );
+        }
+    }
+
+    bool PointInLoop( Vector3 point, IEnumerable<TrailDetector> colliders )
+    {
         int originalLayer = gameObject.layer;
-        int loopTest = LayerMask.NameToLayer( "Loop Test" );
-        foreach( var detector in descendants )
+        int loopTestLayer = LayerMask.NameToLayer( "LoopTest" );
+
+        SetLayer( colliders, loopTestLayer );
+        SetColor( colliders, Color.Lerp( Color.blue, Color.red, Random.value ) );
+
+        int count = 0;
+
+        var directions = new [] {
+            Vector3.up,
+            Vector3.down,
+            Vector3.left,
+            Vector3.right
+        };
+
+        foreach( var dir in directions )
         {
-            detector.gameObject.layer = loopTest;
+            RaycastHit hit;
+            if( Physics.Linecast(
+                point + dir * 100f,
+                point,
+                out hit,
+                1 << loopTestLayer
+            ) )
+            {
+                count++;
+            }
+
+            Debug.DrawRay( point + dir * 100f, -dir * 100f, Color.red, 2f );
         }
 
-        foreach( var flower in Scene.Object<FlowerManager>().Flowers )
-        {
-            var hits = Physics.RaycastAll(
-                flower.transform.position + Vector3.right * 100f,
-                Vector3.left,
-                100f,
-                1 << loopTest
-            );
+        SetLayer( colliders, originalLayer );
 
-            Debug.Log( "hits: " + hits.Length );
-            if( hits.Length % 2 != 0 )
-            {
-                flower.SetOwner( 0 );
-            }
+        return count == 4;
+    }
+
+    void SetColor( IEnumerable<TrailDetector> components, Color color )
+    {
+        foreach( var c in components )
+        {
+            c.Children().Component<Renderer>().material.color = color;
+        }
+    }
+
+    void SetLayer( IEnumerable<TrailDetector> components, int layer )
+    {
+        foreach( var c in components )
+        {
+            c.gameObject.layer = layer;
         }
     }
 

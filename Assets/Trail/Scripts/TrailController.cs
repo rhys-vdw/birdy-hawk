@@ -14,10 +14,12 @@ public class TrailController : Behavior
 
     TrailDetector _lastDetector = null;
     int _layer;
+    Player _player;
 
     void Awake()
     {
-        _layer = Parent().Component<Player>().TrailLayer;
+        _player = Parent().Component<Player>();
+        _layer = _player.TrailLayer;
     }
 
     void Start()
@@ -44,7 +46,7 @@ public class TrailController : Behavior
 
             var detector = _pool.RequestObject<TrailDetector>();
             detector.transform.position = transform.position;
-            detector.StartTimeout( Timeout );
+            detector.Initialize( _player, Timeout );
             detector.gameObject.layer = _layer;
 
             _lastDetector.Next = detector;

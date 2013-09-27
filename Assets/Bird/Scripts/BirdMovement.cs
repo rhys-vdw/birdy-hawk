@@ -18,6 +18,8 @@ public class BirdMovement : Behavior
     public float DecellerationScale = 0.95f;
     public float Gravity = 10f;
 
+    public float MaxSpeed = 10f;
+
     Vector3 _velocity = Vector3.zero;
 
     Renderer[] _renderers;
@@ -56,12 +58,18 @@ public class BirdMovement : Behavior
             forwardVelocity = Vector3.zero;
         }
 
+        Debug.DrawRay( transform.position, forwardVelocity, Color.red );
+
         // Check if we've rotated.
         var rotateDirection = Input.GetAxis( RotateAxis );
 
         if( rotateDirection != 0f )
         {
-            transform.Rotate( -rotateDirection * RotateSpeed * Time.fixedDeltaTime * Vector3.forward, Space.World );
+            // Rotate.
+            transform.Rotate(
+                -rotateDirection * RotateSpeed * Time.fixedDeltaTime * Vector3.forward,
+                Space.World
+            );
 
             // If we've moving fast enough, we can control our flight.
             if( forwardVelocity.magnitude > SteerSpeed )
@@ -73,7 +81,13 @@ public class BirdMovement : Behavior
 
         // Apply drag.
         var oldY = _velocity.y;
+        if( oldY < 0 )
+        {
+            _velocity = _velocity.WithY( 0 );
+        }
+
         _velocity = _velocity.normalized * _velocity.magnitude * DecellerationScale;
+        _velocity = Vector3.ClampMagnitude( _velocity, MaxSpeed );
 
         // Don't drag when falling.
         if( oldY < 0 ) {

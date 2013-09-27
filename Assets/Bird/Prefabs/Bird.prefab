@@ -53,7 +53,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100006
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,14 +288,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 304f82df20829cf48a0b4f1159d2ec6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RotateAxis: Horizontal
+  RotateAxis: Horizontal 2
   RotateSpeed: 180
-  FlapKey: 273
-  FlapAcceleration: 10
+  FlapKey: 119
+  FlapAcceleration: 20
   SteerSpeed: 40
   Decelleration: 30
   DecellerationScale: .99000001
   Gravity: 10
+  MaxSpeed: 50
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
