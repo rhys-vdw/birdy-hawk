@@ -7,6 +7,15 @@ using System.Linq;
 public class Player : Behavior
 {
     public int Number = 0;
+    public Material Material;
+
+    public Color Color
+    {
+        get
+        {
+            return Material.color;
+        }
+    }
 
     public int TrailLayer
     {
@@ -28,7 +37,7 @@ public class Player : Behavior
 
     void Awake()
     {
-        _collider = Descendants().Component<Collider>();
+        _collider = SelfDescendants().Component<Collider>();
     }
 
     void Start()

@@ -21,7 +21,7 @@ public class TrailDetector : Behavior
     void RestoreCollision()
     {
         Physics.IgnoreCollision( collider, _owner.Collider, false );
-        Children().Component<Renderer>().material.color = Color.yellow;
+        //SelfChildren().Component<Renderer>().material.color = Color.yellow;
     }
 
     void Repool()
@@ -32,7 +32,7 @@ public class TrailDetector : Behavior
     void OnDisable()
     {
         Next = null;
-        Children().Component<Renderer>().material.color = Color.white;
+        //Children().Component<Renderer>().material.color = Color.white;
     }
 
     void OnTriggerEnter( Collider c )
@@ -58,7 +58,7 @@ public class TrailDetector : Behavior
         int loopTestLayer = LayerMask.NameToLayer( "LoopTest" );
 
         SetLayer( colliders, loopTestLayer );
-        SetColor( colliders, Color.Lerp( Color.blue, Color.red, Random.value ) );
+        //SetColor( colliders, Color.Lerp( Color.blue, Color.red, Random.value ) );
 
         int count = 0;
 
@@ -82,7 +82,7 @@ public class TrailDetector : Behavior
                 count++;
             }
 
-            Debug.DrawRay( point + dir * 100f, -dir * 100f, Color.red, 2f );
+            //Debug.DrawRay( point + dir * 100f, -dir * 100f, Color.red, 2f );
         }
 
         SetLayer( colliders, originalLayer );

@@ -21,7 +21,10 @@ public class GameObjectPool
         this.pooledObjects = new Stack<GameObject>();
         this.parent = parent;
 
-        PoolObjects( RequestObjects( initalCount ) );
+        if( initalCount > 0 )
+        {
+            PoolObjects( RequestObjects( initalCount ) );
+        }
     }
 
     /// <summary>
@@ -50,7 +53,7 @@ public class GameObjectPool
     /// <param name="count">Number of objecs to return.</param>
     public IList<GameObject> RequestObjects( int count )
     {
-        if( count >= 0 ) Debug.LogError( "Object count must be positive!" );
+        if( count >= 0 ) Debug.LogError( "Object count must be positive: " + count );
 
         return Enumerable
             .Repeat<GameObject>( null, count )
